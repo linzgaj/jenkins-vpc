@@ -21,3 +21,11 @@ resource "aws_subnet" "jenkins-vpc-sub1" {
     Name = "Jenkins VPC Subnet 1"
   }
 }
+
+resource "aws_subnet" "jenkins-vpc-sub2" {
+  vpc_id     = aws_vpc.tf-vpc.id
+  cidr_block = "20.0.2.0/24"
+  tags = {
+    Name = "Jenkins VPC Subnet 2"
+  }
+}
