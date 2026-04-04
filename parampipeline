@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(
+            name: 'ACTION', 
+            choices: ['apply', 'destroy'], 
+            description: 'Select whether to create or delete the infrastructure.'
+        )
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git 'https://github.com/linzgaj/jenkins-vpc.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                // Generates a plan based on the chosen action
+                script {
+                    if (params.ACTION == 'apply') {
+                        sh 'terraform plan -out=tfplan'
+                    } else {
+                        sh 'terraform plan -destroy -out=tfplan'
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
+            steps {
+                sh 'terraform apply "tfplan"'
+            }
+        }
+
+        stage('Terraform Destroy') {
+            when {
+                expression { params.ACTION == 'destroy' }
+            }
+            steps {
+                // Using -auto-approve for the destroy action
+                sh 'terraform destroy -auto-approve'
+            }
+        }
+    }
+}
