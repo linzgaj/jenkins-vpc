@@ -29,7 +29,6 @@ resource "aws_subnet" "jenkins-vpc-sub2" {
     Name = "Jenkins VPC Subnet 2"
   }
 }
-
 resource "aws_subnet" "jenkins-vpc-sub3" {
   vpc_id     = aws_vpc.tf-vpc.id
   cidr_block = "20.0.3.0/24"
